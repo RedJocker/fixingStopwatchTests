@@ -37,7 +37,9 @@ class TimerStateUnitTest {
     @Test
     fun testShouldCheckTimerInitialValue() {
         val expected = "00:00"
-        assertEquals(messageTextViewAssertionError, expected, textView.text)
+
+        val actual = textView.text
+        assertEquals(messageTextViewAssertionError, expected, actual)
     }
 
     @Test
@@ -68,12 +70,13 @@ class TimerStateUnitTest {
     @Test
     fun testShouldStopTimerAndResetCountOnResetButtonClick() {
         val expected = "00:00"
-        startButton.performClick()
 
+        startButton.performClick()
         Thread.sleep(1100)
         shadowOf(getMainLooper()).runToEndOfTasks()
 
         resetButton.performClick()
+        shadowOf(getMainLooper()).runToEndOfTasks()
 
         val actual = textView.text
         assertEquals(messageTextViewAssertionError, expected, actual)
@@ -93,7 +96,6 @@ class TimerStateUnitTest {
         Thread.sleep(1100)
         shadowOf(getMainLooper()).runToEndOfTasks()
 
-
         val actual = textView.text
         assertEquals(messageTextViewAssertionError, expected, actual)
     }
@@ -103,17 +105,14 @@ class TimerStateUnitTest {
         val expected = "00:00"
 
         startButton.performClick()
-
         Thread.sleep(1100)
         shadowOf(getMainLooper()).runToEndOfTasks()
 
         resetButton.performClick()
-
         Thread.sleep(1100)
         shadowOf(getMainLooper()).runToEndOfTasks()
 
         resetButton.performClick()
-
         Thread.sleep(1100)
         shadowOf(getMainLooper()).runToEndOfTasks()
 
