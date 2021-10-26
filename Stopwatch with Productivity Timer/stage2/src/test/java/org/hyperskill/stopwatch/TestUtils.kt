@@ -4,7 +4,7 @@ import android.app.Activity
 import android.view.View
 import org.junit.Assert
 
-// Version 1.3
+// Version 1.4
 object TestUtils {
 
     inline fun <reified T> findViewByString(idString: String, activity: Activity): T {

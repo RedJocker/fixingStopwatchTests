@@ -12,8 +12,9 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows.shadowOf
 
 import org.hyperskill.stopwatch.TestUtils.findViewByString
+import java.util.concurrent.TimeUnit
 
-//Version 1.3
+//Version 1.4
 @RunWith(RobolectricTestRunner::class)
 class TimerStateUnitTest {
 
@@ -48,7 +49,7 @@ class TimerStateUnitTest {
 
         startButton.performClick()
         Thread.sleep(300)
-        shadowOf(getMainLooper()).idle()
+        shadowOf(getMainLooper()).idleFor(300, TimeUnit.MILLISECONDS)
 
         val actual = textView.text
         assertEquals(messageTextViewAssertionError, expected, actual)
@@ -60,7 +61,7 @@ class TimerStateUnitTest {
 
         startButton.performClick()
         Thread.sleep(1100)
-        shadowOf(getMainLooper()).runToEndOfTasks()
+        shadowOf(getMainLooper()).idleFor(1100, TimeUnit.MILLISECONDS)
 
         val actual = textView.text
         assertEquals(messageTextViewAssertionError, expected, actual)
@@ -73,10 +74,11 @@ class TimerStateUnitTest {
 
         startButton.performClick()
         Thread.sleep(1100)
-        shadowOf(getMainLooper()).runToEndOfTasks()
+        shadowOf(getMainLooper()).idleFor(1100, TimeUnit.MILLISECONDS)
 
         resetButton.performClick()
-        shadowOf(getMainLooper()).runToEndOfTasks()
+        Thread.sleep(200)
+        shadowOf(getMainLooper()).idleFor(200, TimeUnit.MILLISECONDS)
 
         val actual = textView.text
         assertEquals(messageTextViewAssertionError, expected, actual)
@@ -85,16 +87,15 @@ class TimerStateUnitTest {
     @Test
     fun testShouldContinueCountOnPressingStartButtonAgain() {
         val expected = "00:02"
-
         startButton.performClick()
         Thread.sleep(1100)
-        shadowOf(getMainLooper()).runToEndOfTasks()
+        shadowOf(getMainLooper()).idleFor(1100, TimeUnit.MILLISECONDS)
 
         startButton.performClick()
         startButton.performClick()
         startButton.performClick()
         Thread.sleep(1100)
-        shadowOf(getMainLooper()).runToEndOfTasks()
+        shadowOf(getMainLooper()).idleFor(1100, TimeUnit.MILLISECONDS)
 
         val actual = textView.text
         assertEquals(messageTextViewAssertionError, expected, actual)
@@ -106,15 +107,15 @@ class TimerStateUnitTest {
 
         startButton.performClick()
         Thread.sleep(1100)
-        shadowOf(getMainLooper()).runToEndOfTasks()
+        shadowOf(getMainLooper()).idleFor(1100, TimeUnit.MILLISECONDS)
 
         resetButton.performClick()
-        Thread.sleep(1100)
-        shadowOf(getMainLooper()).runToEndOfTasks()
+        Thread.sleep(200)
+        shadowOf(getMainLooper()).idleFor(200, TimeUnit.MILLISECONDS)
 
         resetButton.performClick()
-        Thread.sleep(1100)
-        shadowOf(getMainLooper()).runToEndOfTasks()
+        Thread.sleep(200)
+        shadowOf(getMainLooper()).idleFor(200, TimeUnit.MILLISECONDS)
 
         val actual = textView.text
         assertEquals(messageTextViewAssertionError, expected, actual)

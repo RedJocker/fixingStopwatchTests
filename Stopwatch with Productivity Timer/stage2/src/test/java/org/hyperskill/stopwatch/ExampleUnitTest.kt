@@ -11,7 +11,7 @@ import org.robolectric.RobolectricTestRunner
 
 import org.hyperskill.stopwatch.TestUtils.findViewByString
 
-// Version 1.3
+// Version 1.4
 @RunWith(RobolectricTestRunner::class)
 class ExampleUnitTest {
 
