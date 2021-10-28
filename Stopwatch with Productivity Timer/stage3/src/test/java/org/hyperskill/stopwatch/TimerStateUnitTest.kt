@@ -1,6 +1,7 @@
 package org.hyperskill.stopwatch
 
-import android.os.Looper
+import android.app.Activity
+import android.os.Looper.getMainLooper
 import android.widget.Button
 import android.widget.TextView
 import org.junit.Assert.assertEquals
@@ -8,88 +9,115 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
-import org.robolectric.Shadows
+import org.robolectric.Shadows.shadowOf
 
-//Version 1.2
+import org.hyperskill.stopwatch.TestUtils.findViewByString
+import java.util.concurrent.TimeUnit
+
+// Version 1.4
 @RunWith(RobolectricTestRunner::class)
 class TimerStateUnitTest {
 
     private val activityController = Robolectric.buildActivity(MainActivity::class.java)
 
+    private val activity: Activity by lazy {
+        activityController.setup().get()
+    }
+    private val startButton: Button by lazy {
+        findViewByString("startButton", activity)
+    }
+    private val resetButton: Button by lazy {
+        findViewByString("resetButton", activity)
+    }
+    private val textView: TextView by lazy {
+        findViewByString("textView", activity)
+    }
+
+    private val messageTextViewAssertionError = "in TextView property \"text\""
+
     @Test
     fun testShouldCheckTimerInitialValue() {
-        val activity = activityController.setup().get()
+        val expected = "00:00"
 
-        val message = "in TextView property \"text\""
-        assertEquals(message, "00:00", activity.findViewById<TextView>(R.id.textView).text)
+        val actual = textView.text
+        assertEquals(messageTextViewAssertionError, expected, actual)
     }
 
     @Test
-    fun testShouldStartCountOnStartButtonClick() {
-        val activity = activityController.setup().get()
+    fun testShouldTakeOneSecondToCountOneSecondOnStartButtonClick() {
+        val expected = "00:00"
 
-        activity.findViewById<Button>(R.id.startButton).performClick()
+        startButton.performClick()
+        Thread.sleep(300)
+        shadowOf(getMainLooper()).idleFor(300, TimeUnit.MILLISECONDS)
 
-        Thread.sleep(1100)
-        Shadows.shadowOf(Looper.getMainLooper()).runToEndOfTasks()
-
-        val message = "in TextView property \"text\""
-        assertEquals(message, "00:01", activity.findViewById<TextView>(R.id.textView).text)
+        val actual = textView.text
+        assertEquals(messageTextViewAssertionError, expected, actual)
     }
+
+    @Test
+    fun testShouldCountOneSecondAfterOneSecondOnStartButtonClick() {
+        val expected = "00:01"
+
+        startButton.performClick()
+        Thread.sleep(1100)
+        shadowOf(getMainLooper()).idleFor(1100, TimeUnit.MILLISECONDS)
+
+        val actual = textView.text
+        assertEquals(messageTextViewAssertionError, expected, actual)
+    }
+
 
     @Test
     fun testShouldStopTimerAndResetCountOnResetButtonClick() {
-        val activity = activityController.setup().get()
+        val expected = "00:00"
 
-        activity.findViewById<Button>(R.id.startButton).performClick()
-
+        startButton.performClick()
         Thread.sleep(1100)
-        Shadows.shadowOf(Looper.getMainLooper()).runToEndOfTasks()
+        shadowOf(getMainLooper()).idleFor(1100, TimeUnit.MILLISECONDS)
 
-        activity.findViewById<Button>(R.id.resetButton).performClick()
+        resetButton.performClick()
+        Thread.sleep(200)
+        shadowOf(getMainLooper()).idleFor(200, TimeUnit.MILLISECONDS)
 
-        val message = "in TextView property \"text\""
-        assertEquals(message, "00:00", activity.findViewById<TextView>(R.id.textView).text)
+        val actual = textView.text
+        assertEquals(messageTextViewAssertionError, expected, actual)
     }
 
     @Test
     fun testShouldContinueCountOnPressingStartButtonAgain() {
-        val activity = activityController.setup().get()
-
-        activity.findViewById<Button>(R.id.startButton).performClick()
-
+        val expected = "00:02"
+        startButton.performClick()
         Thread.sleep(1100)
-        Shadows.shadowOf(Looper.getMainLooper()).runToEndOfTasks()
+        shadowOf(getMainLooper()).idleFor(1100, TimeUnit.MILLISECONDS)
 
-        activity.findViewById<Button>(R.id.startButton).performClick()
-
+        startButton.performClick()
+        startButton.performClick()
+        startButton.performClick()
         Thread.sleep(1100)
-        Shadows.shadowOf(Looper.getMainLooper()).runToEndOfTasks()
+        shadowOf(getMainLooper()).idleFor(1100, TimeUnit.MILLISECONDS)
 
-        val message = "in TextView property \"text\""
-        assertEquals(message, "00:02", activity.findViewById<TextView>(R.id.textView).text)
+        val actual = textView.text
+        assertEquals(messageTextViewAssertionError, expected, actual)
     }
 
     @Test
     fun testShouldIgnorePressingResetButtonAgain() {
-        val activity = activityController.setup().get()
+        val expected = "00:00"
 
-        activity.findViewById<Button>(R.id.startButton).performClick()
-
+        startButton.performClick()
         Thread.sleep(1100)
-        Shadows.shadowOf(Looper.getMainLooper()).runToEndOfTasks()
+        shadowOf(getMainLooper()).idleFor(1100, TimeUnit.MILLISECONDS)
 
-        activity.findViewById<Button>(R.id.resetButton).performClick()
+        resetButton.performClick()
+        Thread.sleep(200)
+        shadowOf(getMainLooper()).idleFor(200, TimeUnit.MILLISECONDS)
 
-        Thread.sleep(1100)
-        Shadows.shadowOf(Looper.getMainLooper()).runToEndOfTasks()
+        resetButton.performClick()
+        Thread.sleep(200)
+        shadowOf(getMainLooper()).idleFor(200, TimeUnit.MILLISECONDS)
 
-        activity.findViewById<Button>(R.id.resetButton).performClick()
-
-        Thread.sleep(1100)
-        Shadows.shadowOf(Looper.getMainLooper()).runToEndOfTasks()
-
-        val message = "in TextView property \"text\""
-        assertEquals(message, "00:00", activity.findViewById<TextView>(R.id.textView).text)
+        val actual = textView.text
+        assertEquals(messageTextViewAssertionError, expected, actual)
     }
 }
