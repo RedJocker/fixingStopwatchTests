@@ -29,7 +29,6 @@ class ProgressBarUnitTests {
     private val resetButton: Button by lazy {
         findViewByString("resetButton", activity)
     }
-
     private val progressBar: ProgressBar by lazy {
         findViewByString("progressBar", activity)
     }
@@ -86,16 +85,18 @@ class ProgressBarUnitTests {
 
         startButton.performClick()
         startButton.performClick()
-        Shadows.shadowOf(Looper.getMainLooper()).idleFor(1100, TimeUnit.MILLISECONDS)
         Thread.sleep(1100)
+        Shadows.shadowOf(Looper.getMainLooper()).idleFor(1100, TimeUnit.MILLISECONDS)
+
 
         val actualAfterStart = progressBar.visibility
         Assert.assertEquals(messageInvalidVisibility, expectedAfterStart, actualAfterStart)
 
         resetButton.performClick()
         resetButton.performClick()
-        Shadows.shadowOf(Looper.getMainLooper()).idleFor(300, TimeUnit.MILLISECONDS)
         Thread.sleep(300)
+        Shadows.shadowOf(Looper.getMainLooper()).idleFor(300, TimeUnit.MILLISECONDS)
+
 
         val actualAfterReset = progressBar.visibility
         Assert.assertNotEquals(messageInvalidVisibility, unexpectedAfterReset, actualAfterReset)
@@ -103,21 +104,17 @@ class ProgressBarUnitTests {
 
     @Test
     fun testShouldCheckProgressBarColorEachSecond() {
+        var lastColor: Int? = progressBar.indeterminateTintList?.defaultColor
 
         startButton.performClick()
 
-        Thread.sleep(100)
-        Shadows.shadowOf(Looper.getMainLooper()).idleFor(100, TimeUnit.MILLISECONDS)
-
-        var lastColor: Int? = progressBar.indeterminateTintList?.defaultColor
-
         for (i in 0 until 5) {
-            Thread.sleep(1000)
-            Shadows.shadowOf(Looper.getMainLooper()).idleFor(1000, TimeUnit.MILLISECONDS)
+            Thread.sleep(1100)
+            Shadows.shadowOf(Looper.getMainLooper()).idleFor(1100, TimeUnit.MILLISECONDS)
 
             val actualColor = progressBar.indeterminateTintList?.defaultColor
-            Assert.assertNotEquals("$messageInvalidColor\nLastColor: $lastColor", lastColor, actualColor)
 
+            Assert.assertNotEquals(messageInvalidColor.format(lastColor), lastColor, actualColor)
             lastColor = actualColor
         }
     }
